@@ -2,11 +2,7 @@ import { http, HttpResponse } from 'msw';
 import type { 
   LoginRequest, 
   DjangoActionRequest, 
-  ChatMessageRequest,
-  User,
-  Product,
-  Contact,
-  Message
+  ChatMessageRequest
 } from './types';
 
 // Mock data for different backend simulations
@@ -104,7 +100,7 @@ export const djangoHandlers = [
 export const firebaseHandlers = [
   // Auth endpoints
   http.post('/api/firebase/auth/signin', async ({ request }) => {
-    const { email, password } = await request.json() as LoginRequest;
+    const { email, password: _password } = await request.json() as LoginRequest;
     return HttpResponse.json({
       user: {
         uid: 'user123',
@@ -178,14 +174,14 @@ export const expressHandlers = [
 export const laravelHandlers = [
   // Form validation
   http.post('/api/laravel/auth/login', async ({ request }) => {
-    const { email, password } = await request.json() as LoginRequest;
+    const { email, password: _password } = await request.json() as LoginRequest;
     
-    if (!email || !password) {
+    if (!email || !_password) {
       return HttpResponse.json({
         message: 'The given data was invalid.',
         errors: {
           email: email ? [] : ['The email field is required.'],
-          password: password ? [] : ['The password field is required.']
+          password: _password ? [] : ['The password field is required.']
         }
       }, { status: 422 });
     }
@@ -287,7 +283,7 @@ export const supabaseHandlers = [
   }),
 
   http.post('/api/supabase/auth/signin', async ({ request }) => {
-    const { email, password } = await request.json() as LoginRequest;
+    const { email, password: _password } = await request.json() as LoginRequest;
     return HttpResponse.json({
       access_token: 'supabase_jwt_token',
       refresh_token: 'supabase_refresh_token',
